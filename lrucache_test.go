@@ -25,8 +25,30 @@ func TestSet(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
+	cache := NewLRUCache(5)
+	data := []float64{123.22, 4323.333, 7554.2349}
+
+	for i := 0; i < len(data); i++ {
+		cache.Set(i, data[i])
+		elem := cache.Get(i)
+		if elem == nil || elem != data[i] {
+			t.Fatalf("got value: %v, expected value: %v", elem, data[i])
+		}
+	}
 }
 
 func TestDelete(t *testing.T) {
+	cache := NewLRUCache(5)
+	data := []string{"Septem", "Nicole", "Asolia"}
 
+	for i := 0; i < len(data); i++ {
+		cache.Set(i, data[i])
+	}
+
+	for i := 0; i < len(data); i++ {
+		cache.Delete(i)
+		if elem := cache.Get(i); elem != nil {
+			t.Fatalf("got value: %v, expected value: nil", elem)
+		}
+	}
 }
