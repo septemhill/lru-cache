@@ -3,6 +3,7 @@ package lrucache
 import (
 	"container/list"
 	"fmt"
+	"sync"
 )
 
 type data struct {
@@ -14,6 +15,7 @@ type data struct {
 type LRUCache struct {
 	l        *list.List
 	m        map[interface{}]*list.Element
+	mu       sync.Mutex
 	capacity int
 }
 
@@ -40,6 +42,9 @@ func (l *LRUCache) removeLast() {
 
 //Set set data to lru cache
 func (l *LRUCache) Set(key, value interface{}) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
 	if elem, ok := l.m[key]; ok {
 		l.l.MoveToFront(elem)
 		elem.Value.(*data).value = value
@@ -59,6 +64,9 @@ func (l *LRUCache) Set(key, value interface{}) {
 
 //Get gets data from lru cache by key
 func (l *LRUCache) Get(key interface{}) interface{} {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
 	if len(l.m) > 0 {
 		if elem, ok := l.m[key]; ok {
 			l.l.MoveToFront(elem)
@@ -71,6 +79,9 @@ func (l *LRUCache) Get(key interface{}) interface{} {
 
 //Delete removes data from lru cache by key
 func (l *LRUCache) Delete(key interface{}) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
 	if len(l.m) > 0 {
 		if elem, ok := l.m[key]; ok {
 			l.l.Remove(elem)
@@ -89,4 +100,3 @@ func (l *LRUCache) Trace() {
 		fmt.Println(key, val)
 	}
 }
-
