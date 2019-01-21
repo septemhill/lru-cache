@@ -42,8 +42,8 @@ func (l *LRUCache) removeLast() {
 
 //Set set data to lru cache
 func (l *LRUCache) Set(key, value interface{}) {
-	l.mu.Lock()
-	defer l.mu.Unlock()
+	//l.mu.Lock()
+	//defer l.mu.Unlock()
 
 	if elem, ok := l.m[key]; ok {
 		l.l.MoveToFront(elem)
@@ -88,6 +88,21 @@ func (l *LRUCache) Delete(key interface{}) {
 			delete(l.m, key)
 		}
 	}
+}
+
+func (l *LRUCache) Purge() {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	l.m = make(map[interface{}]*list.Element)
+	l.l.Init()
+}
+
+func (l *LRUCache) Len() int {
+	//l.mu.Lock()
+	//defer l.mu.Unlock()
+
+	return l.l.Len()
 }
 
 func (l *LRUCache) Trace() {

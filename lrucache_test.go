@@ -52,3 +52,23 @@ func TestDelete(t *testing.T) {
 		}
 	}
 }
+
+func TestPurge(t *testing.T) {
+	cache := NewLRUCache(100)
+
+	for i := 0; i < 1000; i++ {
+		cache.Set(i, i+332)
+	}
+	len := cache.Len()
+
+	if len != 100 {
+		t.Fatalf("got value: %v, expected value: %v", len, 100)
+	}
+
+	cache.Purge()
+	len = cache.Len()
+
+	if len != 0 {
+		t.Fatalf("got value: %v, expected value: %v", len, 0)
+	}
+}
